@@ -4,7 +4,7 @@ import { Message, MessageType, parseMessage } from "./messages";
 
 const wss = new ws.Server({ port: 8080 });
 
-const users: Array<{ name: string }> = [];
+const users: Array<{ name: string; uuid: string }> = [];
 
 let clients: Array<Client> = [];
 
@@ -28,8 +28,13 @@ wss.on("connection", (socket) => {
     console.log(data.toString());
     switch (message.type) {
       case MessageType.Connection:
-        client.sendMessage({ value: users, type: MessageType.Users });
-        users.push({ name: message.value.name });
+        client.sendMessage({
+          value: users.map((u) => {
+            return { name: u.name };
+          }),
+          type: MessageType.Users,
+        });
+        users.push({ name: message.value.name, uuid: client.uuid });
         broadcast({
           value: { name: message.value.name },
           type: MessageType.NewUser,

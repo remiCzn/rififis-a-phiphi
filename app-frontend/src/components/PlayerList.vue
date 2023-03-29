@@ -8,7 +8,9 @@ import { stateStore } from '@/lib-ws/store'
     <ul>
       <li v-for="user in stateStore.userList" v-bind:key="user.name">{{ user.name }}</li>
     </ul>
-    <button class="launch" :disabled="!stateStore.joined">Launch game</button>
+    <button class="launch" :disabled="!stateStore.joined || stateStore.userList.length <= 0">
+      Launch game
+    </button>
   </div>
 </template>
 
