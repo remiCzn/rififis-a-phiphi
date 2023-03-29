@@ -4,8 +4,7 @@ import { Message, MessageType, parseMessage } from "./messages";
 
 const wss = new ws.Server({ port: 8080 });
 
-const users: Array<{ name: string; uuid: string }> = [];
-
+let users: Array<{ name: string; uuid: string }> = [];
 let clients: Array<Client> = [];
 
 function broadcast(message: Message) {
@@ -47,6 +46,13 @@ wss.on("connection", (socket) => {
   socket.on("close", () => {
     console.log("the client has disconnected");
     clients = clients.filter((v) => v.uuid !== client.uuid);
+    users = users.filter((u) => u.uuid !== client.uuid);
+    broadcast({
+      type: MessageType.Users,
+      value: users.map((u) => {
+        return { name: u.name };
+      }),
+    });
   });
   // handling client connection error
   socket.onerror = function () {
