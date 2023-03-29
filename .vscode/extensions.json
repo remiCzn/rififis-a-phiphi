@@ -1,3 +1,9 @@
 {
-  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin", "syler.sass-indented"]
+  "recommendations": [
+    "vue.volar",
+    "vue.vscode-typescript-vue-plugin",
+    "syler.sass-indented",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
+  ]
 }

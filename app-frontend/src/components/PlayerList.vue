@@ -6,7 +6,7 @@ import { stateStore } from '@/lib-ws/store'
   <div class="main">
     <h2 class="title">Connected players:</h2>
     <ul>
-      <li v-for="user in stateStore.userList">{{ user.name }}</li>
+      <li v-for="user in stateStore.userList" v-bind:key="user.name">{{ user.name }}</li>
     </ul>
     <button class="launch" :disabled="!stateStore.joined">Launch game</button>
   </div>
