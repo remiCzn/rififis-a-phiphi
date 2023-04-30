@@ -7,27 +7,27 @@ export const stateStore = reactive(<
     joined: boolean
     gameState: GameState
   }
->{
-  websocket: new WebsocketClient(),
-  joined: false,
-  gameState: { players: new Map<number,Player>(), current_food:0,current_water:0,current_wood:0, current_player:0, turn_count:0, weather: 0, storm: false, started: false }
-})
+  >{
+    websocket: new WebsocketClient(),
+    joined: false,
+    gameState: { players: new Map<number, Player>(), currentFood: 0, currentWater: 0, currentWood: 0, currentPlayer: 0, turnCount: 0, weather: 0, storm: false, started: false }
+  })
 
 
 export type GameState = {
   weather: number,
   storm: Boolean,
   players: Map<number, Player>,
-  current_water: number,
-  current_wood: number,
-  current_food: number,
-  current_player: number,
-  turn_count: number,
+  currentWater: number,
+  currentWood: number,
+  currentFood: number,
+  currentPlayer: number,
+  turnCount: number,
   started: Boolean
 }
 
 export type Player = {
-  name: String,
+  name: string,
   alive: Boolean,
   sick: Boolean,
   connected: Boolean

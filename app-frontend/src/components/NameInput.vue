@@ -3,7 +3,7 @@ import { stateStore } from '@/lib-ws/store'
 import { MessageType } from '@/lib-ws/ws-message'
 
 function connect() {
-  stateStore.websocket.sendMessage({ type: MessageType.LogIn, playerName: name })
+  stateStore.websocket.sendMessage({ type: MessageType.LogIn, player_name: name })
   stateStore.joined = true
 }
 
@@ -19,6 +19,7 @@ let name: string = ''
 
 <style scoped lang="scss">
 @import '../assets/base.scss';
+
 .main {
   @include flex-column;
 }

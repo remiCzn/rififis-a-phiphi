@@ -6,7 +6,6 @@ use crate::player::Player;
 
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "type")]
-#[serde(rename_all = "PascalCase")]
 pub enum PlayerAction {
     LogIn { player_name: String },
     CollectFood,
