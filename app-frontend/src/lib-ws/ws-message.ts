@@ -1,17 +1,19 @@
 export enum MessageType {
-  Connection = 'CONNECTION',
-  Users = 'USERS',
-  NewUser = 'N_USER'
+  LogIn = 'LogIn',
+  FoodAction = 'CollectFood',
+  WaterAction = 'CollectWater',
+  WoodAction = 'CollectWood',
 }
 
-export type Users = { type: MessageType.Users; value: Array<{ name: string }> }
-export type NewUser = { type: MessageType.NewUser; value: { name: string } }
-export type Connection = {
-  type: MessageType.Connection
-  value: { name: string }
+export type LogIn = {
+  type: MessageType.LogIn
+  playerName: string 
 }
+export type FoodAction = {type: MessageType.FoodAction}
+export type WaterAction = {type: MessageType.FoodAction}
+export type WoodAction = {type: MessageType.FoodAction}
 
-export type Message = Users | NewUser | Connection
+export type Message = LogIn | FoodAction | WaterAction | WoodAction
 
 export function parseMessage(raw: string): Message {
   const data: Message = JSON.parse(raw)

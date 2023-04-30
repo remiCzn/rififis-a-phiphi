@@ -3,7 +3,7 @@ import { stateStore } from '@/lib-ws/store'
 import { MessageType } from '@/lib-ws/ws-message'
 
 function connect() {
-  stateStore.websocket.sendMessage({ type: MessageType.Connection, value: { name: name } })
+  stateStore.websocket.sendMessage({ type: MessageType.LogIn, playerName: name })
   stateStore.joined = true
 }
 

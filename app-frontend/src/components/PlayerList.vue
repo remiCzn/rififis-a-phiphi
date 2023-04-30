@@ -6,10 +6,10 @@ import { stateStore } from '@/lib-ws/store'
   <div class="main">
     <h2 class="title">Connected players:</h2>
     <ul>
-      <li v-for="user in stateStore.userList" v-bind:key="user.name">{{ user.name }}</li>
+      <li v-for="[key,value] in stateStore.gameState.players" v-bind:key="key">{{ value.name }}</li>
     </ul>
     <router-link :to="{name: 'game'}">
-      <button class="launch" :disabled="!stateStore.joined || stateStore.userList.length <= 0">
+      <button class="launch" :disabled="!stateStore.joined || stateStore.gameState.players.size <= 0">
         Launch game
       </button>
     </router-link>
