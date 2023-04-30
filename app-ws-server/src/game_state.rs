@@ -1,6 +1,6 @@
-use rand::Rng;
+use rand::{seq::IteratorRandom, thread_rng, Rng};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, vec};
 
 use crate::player::Player;
 
@@ -10,10 +10,8 @@ pub enum PlayerAction {
     LogIn { player_name: String },
     CollectFood,
     CollectWater,
-    CollectWood { player_name: String, draws: u8 },
+    CollectWood { draws: u8 },
 }
-
-pub enum WoodBoxItem {}
 
 #[derive(Debug, Clone)]
 pub struct GameState {
@@ -45,7 +43,23 @@ pub struct BoardState {
 
 impl Default for GameState {
     fn default() -> Self {
-        let weathers = vec![3, 3, 3, 3];
+        let mut weathers = {
+            let mut raw: Vec<u8> = vec![0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3];
+            let mut results: Vec<u8> = vec![];
+            let l = raw.len();
+            // Mix the weather cards
+            for _ in 0..l {
+                let (i, &out) = raw.iter().enumerate().choose(&mut thread_rng()).unwrap();
+                raw.remove(i);
+                results.push(out);
+            }
+            results
+        };
+        let storm_day = 6 + {
+            let mut rng = thread_rng();
+            rng.gen_range(0..6)
+        };
+        weathers.insert(storm_day, 2);
         Self {
             weathers,
             players: Default::default(),
@@ -55,7 +69,7 @@ impl Default for GameState {
             current_player: Default::default(),
             turn_count: Default::default(),
             started: Default::default(),
-            storm: 3,
+            storm: storm_day as u8,
         }
     }
 }
@@ -75,7 +89,7 @@ impl GameState {
         }
     }
 
-    pub fn draw_wood(&mut self, player_name: String, draws: u8) {
+    pub fn draw_wood(&mut self, _player_id: u8, _draws: u8) {
         ()
     }
 
@@ -116,7 +130,7 @@ impl GameState {
             PlayerAction::LogIn { player_name } => self.add_player(player_name, id),
             PlayerAction::CollectFood => self.draw_food(),
             PlayerAction::CollectWater => self.collect_water(),
-            PlayerAction::CollectWood { player_name, draws } => self.draw_wood(player_name, draws),
+            PlayerAction::CollectWood { draws } => self.draw_wood(id, draws),
         }
     }
 

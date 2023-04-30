@@ -4,7 +4,7 @@ use axum::{
         WebSocketUpgrade,
     },
     response::IntoResponse,
-    routing::{get, post},
+    routing::get,
     Extension, Router,
 };
 use futures::{lock::Mutex, stream::SplitSink, SinkExt, StreamExt};
