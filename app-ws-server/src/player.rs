@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone)]
 pub struct Player {
@@ -10,7 +10,12 @@ pub struct Player {
 
 impl Default for Player {
     fn default() -> Self {
-        Self { name: Default::default(), alive: true, sick: false, connected: true }
+        Self {
+            name: Default::default(),
+            alive: true,
+            sick: false,
+            connected: true,
+        }
     }
 }
 

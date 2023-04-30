@@ -1,8 +1,16 @@
-use std::{sync::Arc, net::SocketAddr, mem, collections::{HashMap}};
-use game_state::{GameState, PlayerAction};
-use axum::{extract::{ws::{WebSocket, Message}, WebSocketUpgrade}, Router, Extension, response::IntoResponse, routing::{get, post}};
+use axum::{
+    extract::{
+        ws::{Message, WebSocket},
+        WebSocketUpgrade,
+    },
+    response::IntoResponse,
+    routing::{get, post},
+    Extension, Router,
+};
 use futures::{lock::Mutex, stream::SplitSink, SinkExt, StreamExt};
+use game_state::{GameState, PlayerAction};
 use serde_json::Error;
+use std::{collections::HashMap, mem, net::SocketAddr, sync::Arc};
 
 mod game_state;
 mod player;
@@ -10,7 +18,7 @@ mod player;
 #[derive(Debug, Default)]
 pub struct WsState {
     pub game_state: Mutex<GameState>,
-    txs: Mutex<HashMap<u8, SplitSink<WebSocket, Message>>>
+    txs: Mutex<HashMap<u8, SplitSink<WebSocket, Message>>>,
 }
 
 impl WsState {
@@ -33,11 +41,9 @@ impl WsState {
         game_state.perform_action(action, id);
         let message = serde_json::to_string(&game_state.clone())?;
         let mut txs = self.txs.lock().await;
-        println!("{:?}", txs.keys());
         for (id, mut tx) in mem::take(&mut *txs) {
             if let Err(err) = tx.send(Message::Text(message.clone())).await {
                 println!("Client disconnected: {}", err);
-                
             } else {
                 txs.insert(id, tx);
             }
@@ -76,7 +82,6 @@ pub async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
 
 #[tokio::main]
 async fn main() {
-
     let app = Router::new()
         .route("/ws", get(ws_handler))
         .layer(Extension(Arc::new(WsState::default())));
@@ -88,5 +93,3 @@ async fn main() {
         .await
         .unwrap();
 }
-
-
