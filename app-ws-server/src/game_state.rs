@@ -100,4 +100,8 @@ impl GameState {
             PlayerAction::CollectWood { player_name, draws } => self.draw_wood(player_name, draws),
         }
     }
+
+    pub fn on_player_disconnected(&mut self, id: u8) {
+        
+    }
 }
