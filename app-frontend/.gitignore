@@ -28,4 +28,4 @@ coverage
 *.sw?
 
 #Yarn
-**/yarn.lock
+yarn.lock
