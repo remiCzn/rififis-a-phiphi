@@ -1,9 +1,6 @@
-use rand::{
-    seq::{IteratorRandom, SliceRandom},
-    thread_rng, Rng,
-};
+use rand::{seq::IteratorRandom, thread_rng, Rng};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::Read, vec};
+use std::{collections::HashMap, vec};
 
 use crate::player::Player;
 
@@ -13,10 +10,8 @@ pub enum PlayerAction {
     LogIn { player_name: String },
     CollectFood,
     CollectWater,
-    CollectWood { player_name: String, draws: u8 },
+    CollectWood { draws: u8 },
 }
-
-pub enum WoodBoxItem {}
 
 #[derive(Debug, Clone)]
 pub struct GameState {
@@ -65,7 +60,6 @@ impl Default for GameState {
             rng.gen_range(0..6)
         };
         weathers.insert(storm_day, 2);
-        println!("{:?}, {}", weathers, storm_day);
         Self {
             weathers,
             players: Default::default(),
@@ -95,7 +89,7 @@ impl GameState {
         }
     }
 
-    pub fn draw_wood(&mut self, player_name: String, draws: u8) {
+    pub fn draw_wood(&mut self, _player_id: u8, _draws: u8) {
         ()
     }
 
@@ -136,7 +130,7 @@ impl GameState {
             PlayerAction::LogIn { player_name } => self.add_player(player_name, id),
             PlayerAction::CollectFood => self.draw_food(),
             PlayerAction::CollectWater => self.collect_water(),
-            PlayerAction::CollectWood { player_name, draws } => self.draw_wood(player_name, draws),
+            PlayerAction::CollectWood { draws } => self.draw_wood(id, draws),
         }
     }
 
