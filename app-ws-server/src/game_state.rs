@@ -1,6 +1,9 @@
-use rand::Rng;
+use rand::{
+    seq::{IteratorRandom, SliceRandom},
+    thread_rng, Rng,
+};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, io::Read, vec};
 
 use crate::player::Player;
 
@@ -45,7 +48,24 @@ pub struct BoardState {
 
 impl Default for GameState {
     fn default() -> Self {
-        let weathers = vec![3, 3, 3, 3];
+        let mut weathers = {
+            let mut raw: Vec<u8> = vec![0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3];
+            let mut results: Vec<u8> = vec![];
+            let l = raw.len();
+            // Mix the weather cards
+            for _ in 0..l {
+                let (i, &out) = raw.iter().enumerate().choose(&mut thread_rng()).unwrap();
+                raw.remove(i);
+                results.push(out);
+            }
+            results
+        };
+        let storm_day = 6 + {
+            let mut rng = thread_rng();
+            rng.gen_range(0..6)
+        };
+        weathers.insert(storm_day, 2);
+        println!("{:?}, {}", weathers, storm_day);
         Self {
             weathers,
             players: Default::default(),
@@ -55,7 +75,7 @@ impl Default for GameState {
             current_player: Default::default(),
             turn_count: Default::default(),
             started: Default::default(),
-            storm: 3,
+            storm: storm_day as u8,
         }
     }
 }
