@@ -1,10 +1,11 @@
 use std::{sync::Arc, net::SocketAddr, mem, collections::{HashMap}};
-mod game_state;
 use game_state::{GameState, PlayerAction};
 use axum::{extract::{ws::{WebSocket, Message}, WebSocketUpgrade}, Router, Extension, response::IntoResponse, routing::{get, post}};
 use futures::{lock::Mutex, stream::SplitSink, SinkExt, StreamExt};
 use serde_json::Error;
 
+mod game_state;
+mod player;
 
 #[derive(Debug, Default)]
 pub struct WsState {
@@ -20,7 +21,7 @@ impl WsState {
 
     async fn process_msg(&self, action: PlayerAction) -> Result<(), Error> {
         let mut game_state = self.game_state.lock().await;
-        game_state.perform_action(action);
+        game_state.perform_action(action, 0);
         let message = serde_json::to_string(&game_state.clone())?;
         let mut txs = self.txs.lock().await;
         for mut tx in mem::take(&mut *txs) {

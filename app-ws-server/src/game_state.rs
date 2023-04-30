@@ -1,6 +1,8 @@
-use std::collections::{HashSet, BTreeSet};
+use std::collections::{HashSet, BTreeSet, HashMap};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+
+use crate::player::Player;
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 #[repr(u8)]
@@ -46,13 +48,11 @@ pub enum WoodBoxItem {
 #[serde(rename_all = "camelCase")]
 pub struct GameState {
     weather: Weather,
-    players: BTreeSet<String>,
+    players: HashMap<u8, Player>,
     current_water: u8,
     current_wood: u8,
     current_food: u8,
-    current_player: String,
-    alive_players: BTreeSet<u8>,
-    sick_players: BTreeSet<u8>,
+    current_player: u8,
     turn_count: u8,
     started: bool
 }
@@ -75,20 +75,26 @@ impl GameState {
         self.current_water += self.weather as u8;
     }
 
-    pub fn add_player(&mut self, player_name: String) {
+    pub fn add_player(&mut self, player_name: String, id: u8) {
+        // Can't connect when the game is already started
         if self.started { 
             return; 
         }
-        self.players.insert(player_name.to_string());
+        //Return if the user is already connected
+        if let Some(_) = self.players.get(&id) {
+            return;
+        }
+        //Insert new player
+        self.players.insert(id, Player::new(player_name));
         if self.players.is_empty() {
-            self.current_player = player_name;
+            self.current_player = id;
         }
     }
 
-    pub fn perform_action(&mut self, action: PlayerAction) {
+    pub fn perform_action(&mut self, action: PlayerAction, id: u8) {
         println!("Performing action : {} \non current game state.", serde_json::to_string_pretty(&action).unwrap());
         match action {
-            PlayerAction::LogIn { player_name } => self.add_player(player_name),
+            PlayerAction::LogIn { player_name } => self.add_player(player_name, id),
             PlayerAction::CollectFood => self.draw_food(),
             PlayerAction::CollectWater => self.collect_water(),
             PlayerAction::CollectWood { player_name, draws } => self.draw_wood(player_name, draws),
