@@ -1,17 +1,8 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::HashMap;
 
 use crate::player::Player;
-
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-#[repr(u8)]
-pub enum Weather {
-    Drougth = 1,
-    Downpour = 2,
-    Monsoon = 3,
-    Ouragan = 99,
-}
 
 #[derive(Deserialize, Serialize)]
 #[serde(tag = "type")]
@@ -23,29 +14,27 @@ pub enum PlayerAction {
     CollectWood { player_name: String, draws: u8 },
 }
 
-impl Default for Weather {
-    fn default() -> Weather {
-        Weather::random()
-    }
-}
-
-impl Weather {
-    pub fn random() -> Weather {
-        match rand::thread_rng().gen_range(1..4) {
-            1 => Weather::Drougth,
-            2 => Weather::Downpour,
-            3 => Weather::Monsoon,
-            _ => Weather::Ouragan,
-        }
-    }
-}
-
 pub enum WoodBoxItem {}
 
-#[derive(Debug, Default, Clone, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Debug, Clone)]
 pub struct GameState {
-    weather: Weather,
+    weathers: Vec<u8>,
+    players: HashMap<u8, Player>,
+    current_water: u8,
+    current_wood: u8,
+    current_food: u8,
+    current_player: u8,
+    turn_count: u8,
+    started: bool,
+    storm: u8,
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+
+pub struct BoardState {
+    weather: u8,
+    storm: bool,
     players: HashMap<u8, Player>,
     current_water: u8,
     current_wood: u8,
@@ -55,7 +44,38 @@ pub struct GameState {
     started: bool,
 }
 
+impl Default for GameState {
+    fn default() -> Self {
+        let weathers = vec![3, 3, 3, 3];
+        Self {
+            weathers,
+            players: Default::default(),
+            current_water: Default::default(),
+            current_wood: Default::default(),
+            current_food: Default::default(),
+            current_player: Default::default(),
+            turn_count: Default::default(),
+            started: Default::default(),
+            storm: 3,
+        }
+    }
+}
+
 impl GameState {
+    pub fn to_board_state(&self) -> BoardState {
+        BoardState {
+            weather: self.weathers.get(self.turn_count as usize).unwrap().clone(),
+            storm: self.storm == self.turn_count,
+            players: self.players.clone(),
+            current_water: self.current_water,
+            current_wood: self.current_wood,
+            current_food: self.current_food,
+            current_player: self.current_player,
+            turn_count: self.turn_count,
+            started: self.started,
+        }
+    }
+
     pub fn draw_wood(&mut self, player_name: String, draws: u8) {
         ()
     }
@@ -69,7 +89,7 @@ impl GameState {
     }
 
     pub fn collect_water(&mut self) {
-        self.current_water += self.weather as u8;
+        self.current_water += self.weathers.get(self.turn_count as usize).unwrap();
     }
 
     pub fn add_player(&mut self, player_name: String, id: u8) {
