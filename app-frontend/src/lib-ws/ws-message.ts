@@ -10,8 +10,8 @@ export type LogIn = {
   player_name: string
 }
 export type FoodAction = { type: MessageType.FoodAction }
-export type WaterAction = { type: MessageType.FoodAction }
-export type WoodAction = { type: MessageType.FoodAction }
+export type WaterAction = { type: MessageType.WaterAction }
+export type WoodAction = { type: MessageType.WoodAction }
 
 export type Message = LogIn | FoodAction | WaterAction | WoodAction
 
