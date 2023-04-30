@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+
 pub struct Player {
     pub name: String,
     pub alive: bool,

@@ -39,7 +39,7 @@ impl WsState {
     async fn process_msg(&self, action: PlayerAction, id: u8) -> Result<(), Error> {
         let mut game_state = self.game_state.lock().await;
         game_state.perform_action(action, id);
-        let message = serde_json::to_string(&game_state.clone())?;
+        let message = serde_json::to_string(&game_state.to_board_state())?;
         let mut txs = self.txs.lock().await;
         for (id, mut tx) in mem::take(&mut *txs) {
             if let Err(err) = tx.send(Message::Text(message.clone())).await {
