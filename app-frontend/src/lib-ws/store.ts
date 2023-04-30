@@ -30,4 +30,5 @@ export type Player = {
   name: String,
   alive: Boolean,
   sick: Boolean,
+  connected: Boolean
 }
