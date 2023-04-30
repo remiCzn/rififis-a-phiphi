@@ -101,5 +101,9 @@ impl GameState {
         }
     }
 
-    pub fn on_player_disconnected(&mut self, id: u8) {}
+    pub fn on_player_disconnected(&mut self, id: u8) {
+        if let Some(p) = self.players.get_mut(&id) {
+            p.connected = false;
+        }
+    }
 }
