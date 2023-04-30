@@ -1,23 +1,14 @@
-import { stateStore } from './store'
-import { MessageType, type Message } from './ws-message'
+import { stateStore, type GameState } from './store'
+import type { Message } from './ws-message'
 
 export default class WebsocketClient {
   constructor() {
     this.connection = new WebSocket('ws://localhost:8080')
     this.connection.onmessage = (event: MessageEvent<string>) => {
       console.log(event.data)
-      const msg: Message = JSON.parse(event.data)
-      switch (msg.type) {
-        case MessageType.Users:
-          console.log(msg)
-          stateStore.userList = msg.value
-          break
-        case MessageType.NewUser:
-          console.log(msg)
-          stateStore.userList.push(msg.value)
-          break
-      }
-      console.log(stateStore.userList.length)
+      const msg: GameState = JSON.parse(event.data)
+      stateStore.gameState = msg
+      console.log(stateStore.gameState.players.size)
     }
 
     this.connection.onclose = (e) => {
