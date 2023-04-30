@@ -1,34 +1,51 @@
-use std::{sync::Arc, net::SocketAddr, mem, collections::{HashMap}};
-mod game_state;
-use game_state::{GameState, PlayerAction};
-use axum::{extract::{ws::{WebSocket, Message}, WebSocketUpgrade}, Router, Extension, response::IntoResponse, routing::{get, post}};
+use axum::{
+    extract::{
+        ws::{Message, WebSocket},
+        WebSocketUpgrade,
+    },
+    response::IntoResponse,
+    routing::{get, post},
+    Extension, Router,
+};
 use futures::{lock::Mutex, stream::SplitSink, SinkExt, StreamExt};
+use game_state::{GameState, PlayerAction};
 use serde_json::Error;
+use std::{collections::HashMap, mem, net::SocketAddr, sync::Arc};
 
+mod game_state;
+mod player;
 
 #[derive(Debug, Default)]
 pub struct WsState {
-    game_state: Mutex<GameState>,
-    txs: Mutex<Vec<SplitSink<WebSocket, Message>>>
+    pub game_state: Mutex<GameState>,
+    txs: Mutex<HashMap<u8, SplitSink<WebSocket, Message>>>,
 }
 
 impl WsState {
-    async fn add_session(&self, tx: SplitSink<WebSocket, Message>) {
+    async fn add_session(&self, tx: SplitSink<WebSocket, Message>) -> u8 {
         let mut txs = self.txs.lock().await;
-        txs.push(tx);
+        let id = txs.len() as u8;
+        txs.insert(id, tx);
+        id
     }
 
-    async fn process_msg(&self, action: PlayerAction) -> Result<(), Error> {
+    async fn close_session(&self, id: u8) {
+        let mut txs = self.txs.lock().await;
+        txs.remove(&id);
+        let mut game = self.game_state.lock().await;
+        game.on_player_disconnected(id);
+    }
+
+    async fn process_msg(&self, action: PlayerAction, id: u8) -> Result<(), Error> {
         let mut game_state = self.game_state.lock().await;
-        game_state.perform_action(action);
+        game_state.perform_action(action, id);
         let message = serde_json::to_string(&game_state.clone())?;
         let mut txs = self.txs.lock().await;
-        for mut tx in mem::take(&mut *txs) {
+        for (id, mut tx) in mem::take(&mut *txs) {
             if let Err(err) = tx.send(Message::Text(message.clone())).await {
                 println!("Client disconnected: {}", err);
-                
             } else {
-                txs.push(tx)
+                txs.insert(id, tx);
             }
         }
         Ok(())
@@ -46,12 +63,12 @@ async fn ws_handler(
 pub async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
     let (tx, mut rx) = socket.split();
 
-    state.add_session(tx).await;
+    let id = state.add_session(tx).await;
 
     while let Some(Ok(msg)) = rx.next().await {
         if let Message::Text(text) = msg {
             if let Ok(action) = serde_json::from_str::<PlayerAction>(&text) {
-                if let Err(err) = state.process_msg(action).await {
+                if let Err(err) = state.process_msg(action, id).await {
                     println!("Error applying state:{}", err);
                 }
             } else {
@@ -59,11 +76,12 @@ pub async fn handle_socket(socket: WebSocket, state: Arc<WsState>) {
             }
         }
     }
+
+    state.close_session(id).await;
 }
 
 #[tokio::main]
 async fn main() {
-
     let app = Router::new()
         .route("/ws", get(ws_handler))
         .layer(Extension(Arc::new(WsState::default())));
@@ -75,5 +93,3 @@ async fn main() {
         .await
         .unwrap();
 }
-
-
