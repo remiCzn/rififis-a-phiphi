@@ -3,3 +3,5 @@
 **/package-lock.json
 **/target
 **/Cargo.lock
+**/.idea
+**/.vite
