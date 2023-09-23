@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ActionsButtons from "../components/ActionsButtons.vue";
 import RessourcesStates from "../components/RessourcesStates.vue";
+import ConnectionLostModal from "../components/ConnectionLostModal.vue";
 </script>
 
 <template>
@@ -12,16 +13,15 @@ import RessourcesStates from "../components/RessourcesStates.vue";
       <ActionsButtons></ActionsButtons>
     </div>
     <div class="line3">
-      <router-link :to="{name: 'lobby'}">
+      <router-link :to="{ name: 'lobby' }">
         <button>Back to lobby</button>
       </router-link>
     </div>
   </div>
+  <ConnectionLostModal></ConnectionLostModal>
 </template>
 
 <style scoped>
-
-
 .line {
   width: 100%;
   height: 40%;

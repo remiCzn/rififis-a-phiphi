@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import NameInput from "../components/NameInput.vue";
 import PlayerList from "../components/PlayerList.vue";
+import ConnectionLostModal from "../components/ConnectionLostModal.vue";
 </script>
 
 <template>
-  <div class="border w-full h-full flex flex-col md:flex-row items-center bg-slate-100 border-slate-900 rounded-lg">
+  <div
+    class="border w-full h-full flex flex-col md:flex-row items-center bg-slate-100 border-slate-900 rounded-lg"
+  >
     <div class="col p-5 md:p-0">
       <NameInput></NameInput>
     </div>
@@ -13,11 +16,11 @@ import PlayerList from "../components/PlayerList.vue";
       <PlayerList></PlayerList>
     </div>
   </div>
+  <ConnectionLostModal></ConnectionLostModal>
 </template>
 
 <style scoped lang="scss">
 .col {
   @apply md:w-1/2 md:h-full w-full h-auto flex justify-center items-center;
-
 }
 </style>
