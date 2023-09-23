@@ -1,20 +1,36 @@
 <script setup lang="ts">
-// import { stateStore } from '@/lib-ws/store'
+import { useUserStore } from "../lib/users";
+const userStore = useUserStore();
 </script>
-
 <template>
-  <div class="h-full w-full p-2">
+  <div class="h-full w-full p-10 flex flex-col">
     <h2 class="pb-2">Connected players:</h2>
-    <ul>
-      <!--      <li v-for="value in stateStore.gameState.players.values()" v-bind:key="value.name">{{ value.name }}</li>-->
+    <ul role="list" class="divide-y divide-gray-100">
+      <li
+        class="flex min-w-0 gap-x-4 m-1"
+        v-for="(value, i) in userStore.users"
+        v-bind:key="value.username"
+      >
+        <img
+          :src="`../../assets/profiles/${(i % 5) + 1}.jpeg`"
+          class="h-12 w-12 flex-none rounded-full border"
+          alt=""
+        />
+        <div class="min-w-0 flex items-center">
+          <p class="text-sm font-semibold leading-6 text-gray-900">
+            {{ value.username }}
+          </p>
+        </div>
+      </li>
     </ul>
-    <router-link :to="{ name: 'game' }">
-      <button class="btn-green p-3">Launch game</button>
-      <!--      <button class="launch" :disabled="!stateStore.joined || stateStore.gameState.players.size <= 0">-->
-      <!--        Launch game-->
-      <!--      </button>-->
+    <router-link :to="{ name: 'game' }" class="mt-auto">
+      <button
+        class="btn-green p-3"
+        :disabled="userStore.users.length <= 0 || !userStore.joined"
+      >
+        Launch game
+      </button>
     </router-link>
-
   </div>
 </template>
 

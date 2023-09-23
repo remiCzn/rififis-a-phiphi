@@ -4,7 +4,7 @@ import RessourcesStates from "../components/RessourcesStates.vue";
 </script>
 
 <template>
-  <main>
+  <div class="w-full h-full flex flex-col">
     <div class="line line1">
       <RessourcesStates></RessourcesStates>
     </div>
@@ -16,16 +16,10 @@ import RessourcesStates from "../components/RessourcesStates.vue";
         <button>Back to lobby</button>
       </router-link>
     </div>
-  </main>
+  </div>
 </template>
 
-<style scoped lang="scss">
-
-main {
-  height: 100vh;
-  /* border: 1pt red solid; */
-  @apply flex flex-col;
-}
+<style scoped>
 
 
 .line {
@@ -69,10 +63,6 @@ main {
 
   .line1 {
     padding: 30pt;
-  }
-
-  main {
-    @apply flex flex-col;
   }
 
   .separator_h {

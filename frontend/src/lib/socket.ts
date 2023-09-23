@@ -1,25 +1,37 @@
+import { ClientToServerMessages, ServerToClientMessages } from "common";
 import { defineStore } from "pinia";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import { ref } from "vue";
 
+export const useSocketStore = defineStore("store", () => {
+  const connected = ref(false);
 
-export const socketStore = defineStore("store", () => {
-    const connected = ref(false)
+  const socket: Socket<ServerToClientMessages, ClientToServerMessages> = io(
+    "http://localhost:3000"
+  );
 
-    const socket = io("http://localhost:3000")
+  socket.on("connect", () => {
+    console.log("connected");
+    connected.value = true;
+  });
 
-    socket.on("connect", () => {
-        console.log("connected")
-        connected.value = true;
-    })
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+    connected.value = false;
+  });
 
-    socket.on("disconnect", () => {
-        console.log("disconnected")
-        connected.value = false;
-    })
+  const joinRoom = (username: string) => {
+    socket.emit("join", username);
+  };
 
-    return {
-        socket,
-        connected
-    }
-})
+  const leftRoom = () => {
+    socket.emit("left");
+  };
+
+  return {
+    socket,
+    connected,
+    joinRoom,
+    leftRoom,
+  };
+});

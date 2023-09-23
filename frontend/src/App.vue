@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { socketStore } from "./lib/socket";
-const socket = socketStore();
+import { useSocketStore } from "./lib/socket";
+const socket = useSocketStore();
 </script>
 
 <template>
