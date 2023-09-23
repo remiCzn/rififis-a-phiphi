@@ -4,52 +4,20 @@ import PlayerList from "../components/PlayerList.vue";
 </script>
 
 <template>
-  <main>
-    <div class="col col1"><NameInput></NameInput></div>
-    <div class="separator"></div>
-    <div class="col col2"><PlayerList></PlayerList></div>
-  </main>
+  <div class="border w-full h-full flex flex-col md:flex-row items-center bg-slate-100 border-slate-900 rounded-lg">
+    <div class="col p-5 md:p-0">
+      <NameInput></NameInput>
+    </div>
+    <div class="hidden md:block md:border md:border-gray-400 md:h-5/6"></div>
+    <div class="col">
+      <PlayerList></PlayerList>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
-
-main {
-  height: 100vh;
-  /* border: 1pt red solid; */
-  align-items: center;
-  @apply flex flex-row;
-}
-
-.separator {
-  border: 1pt gray solid;
-  height: 85%;
-}
-
 .col {
-  width: 50%;
-  height: 100%;
-  /* border: green 1pt solid; */
-  @apply flex;
-  justify-content: center;
-  align-items: center;
-}
+  @apply md:w-1/2 md:h-full w-full h-auto flex justify-center items-center;
 
-@media (max-width: 760px) {
-  .col {
-    width: 100%;
-    height: auto;
-  }
-
-  .col1 {
-    padding: 30pt;
-  }
-
-  main {
-    @apply flex flex-col;
-  }
-
-  .separator {
-    display: none;
-  }
 }
 </style>
