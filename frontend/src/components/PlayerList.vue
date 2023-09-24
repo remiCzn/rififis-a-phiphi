@@ -2,6 +2,8 @@
 import { useUserStore } from "../lib/users";
 import { useSocketStore } from "../lib/socket";
 import { useGameStore } from "../lib/game";
+import { profilePic } from "../lib/assets";
+
 const userStore = useUserStore();
 const socketStore = useSocketStore();
 const gameStore = useGameStore();
@@ -12,11 +14,11 @@ const gameStore = useGameStore();
     <ul role="list" class="divide-y divide-gray-100">
       <li
         class="flex min-w-0 gap-x-4 m-1"
-        v-for="(value, i) in userStore.users"
+        v-for="value in userStore.users"
         v-bind:key="value.username"
       >
         <img
-          :src="`../../assets/profiles/${(i % 5) + 1}.jpeg`"
+          :src="profilePic()"
           class="h-12 w-12 flex-none rounded-full border"
           alt=""
         />
