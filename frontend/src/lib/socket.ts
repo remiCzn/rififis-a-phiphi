@@ -28,10 +28,15 @@ export const useSocketStore = defineStore("store", () => {
     socket.emit("left");
   };
 
+  const launchGame = () => {
+    socket.emit("launchGame");
+  };
+
   return {
     socket,
     connected,
     joinRoom,
     leftRoom,
+    launchGame,
   };
 });

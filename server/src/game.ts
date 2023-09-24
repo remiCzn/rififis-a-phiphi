@@ -1,3 +1,4 @@
+import { gameStatus } from "common";
 import { Player, PlayerManager } from "./player";
 
 export class GameState {
@@ -28,5 +29,34 @@ export class GameState {
     this.current_player = "";
     this.turn_count = -1;
     this.started = false;
+  }
+
+  getStatus(): gameStatus.GameStatus {
+    //TODO add state "Finished" later
+    if (this.started) {
+      return "Launched";
+    } else {
+      return "Lobby";
+    }
+  }
+
+  launchGame() {
+    this.started = true;
+    const playerCount = this.players.getList().length;
+    let foodAndWater: { [x: number]: [number, number] } = {
+      3: [5, 6],
+      4: [7, 8],
+      5: [9, 10],
+      6: [10, 12],
+      7: [12, 14],
+      8: [13, 16],
+      9: [15, 18],
+      10: [16, 20],
+      11: [18, 22],
+      12: [20, 24],
+    };
+
+    this.current_food = foodAndWater[playerCount][0];
+    this.current_water = foodAndWater[playerCount][1];
   }
 }

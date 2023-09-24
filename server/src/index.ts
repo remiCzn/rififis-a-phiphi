@@ -1,8 +1,11 @@
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { GameState } from "./game";
 import { Player } from "./player";
 import { ClientToServerMessages, ServerToClientMessages } from "common";
+
+type RififiServer = Server<ClientToServerMessages, ServerToClientMessages>;
+type RififiSocket = Socket<ClientToServerMessages, ServerToClientMessages>;
 
 const httpserver = createServer();
 const io = new Server<ClientToServerMessages, ServerToClientMessages>(
@@ -16,25 +19,46 @@ const io = new Server<ClientToServerMessages, ServerToClientMessages>(
 
 const gameState = new GameState();
 io.on("connection", (socket) => {
-  socket.emit("userList", gameState.players.getList());
-  socket.emit("joined", gameState.players.isPlayerJoined(socket.id));
+  updateLobbyState(gameState, io, socket);
 
   socket.on("join", (username) => {
-    gameState.players.addPlayer(socket.id, username);
-    io.emit("userList", gameState.players.getList());
-    socket.emit("joined", gameState.players.isPlayerJoined(socket.id));
+    if (gameState.getStatus() == "Lobby") {
+      gameState.players.addPlayer(socket.id, username);
+    }
+    updateLobbyState(gameState, io, socket);
   });
 
   socket.on("left", () => {
-    gameState.players.removePlayer(socket.id);
-    io.emit("userList", gameState.players.getList());
-    socket.emit("joined", gameState.players.isPlayerJoined(socket.id));
+    if (gameState.getStatus() == "Lobby") {
+      gameState.players.removePlayer(socket.id);
+    }
+    updateLobbyState(gameState, io, socket);
   });
 
   socket.on("disconnect", () => {
-    gameState.players.removePlayer(socket.id);
-    io.emit("userList", gameState.players.getList());
+    if (gameState.getStatus() == "Lobby") {
+      gameState.players.removePlayer(socket.id);
+    }
+    updateLobbyState(gameState, io, socket);
+  });
+
+  socket.on("launchGame", () => {
+    console.log("Launching game...");
+    if (gameState.getStatus() == "Lobby") {
+      gameState.launchGame();
+    }
+    updateLobbyState(gameState, io, socket);
   });
 });
+
+function updateLobbyState(
+  gameState: GameState,
+  io: RififiServer,
+  socket: RififiSocket
+) {
+  io.emit("userList", gameState.players.getList());
+  socket.emit("joined", gameState.players.isPlayerJoined(socket.id));
+  io.emit("gameStatus", gameState.getStatus());
+}
 
 httpserver.listen(3000);
