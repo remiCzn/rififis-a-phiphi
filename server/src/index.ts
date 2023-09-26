@@ -48,6 +48,9 @@ io.on("connection", (socket) => {
       gameState.launchGame();
     }
     updateLobbyState(gameState, io, socket);
+    io.emit("foodUpdate", gameState.current_food)
+    io.emit("waterUpdate", gameState.current_water)
+    io.emit("woodUpdate", gameState.current_wood)
   });
 });
 

@@ -1,20 +1,22 @@
 <script setup lang="ts">
-// import { stateStore } from '@/lib-ws/store'
+import { useRessourcesStore } from '../lib/ressources';
+
+const ressources = useRessourcesStore()
 </script>
 
 <template>
     <div class="etat">
         <h1>Etat Nourriture</h1>
-        <h2>0</h2>
+        <h2>{{ ressources.food }}</h2>
     </div>
     <div class="etat">
         <h1>Etat Eau</h1>
-        <h2>0</h2>
+        <h2>{{ ressources.water }}</h2>
     </div>
     <div class="etat">
-        <h1>Radeaux</h1>
-        <h2>3</h2>
-        <h3>2</h3>
+        <h1>Etat radeaux {{ ressources.wood }}</h1>
+        <h2>{{ Math.floor(ressources.wood / 6) }} radeaux</h2>
+        <h3>{{ ressources.wood % 6 }} bois</h3>
     </div>
 </template>
 
@@ -22,10 +24,6 @@
 <style scoped lang="scss">
 
 .etat {
-    width: 33%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    @apply flex flex-col
+    @apply flex flex-col w-1/3 h-full justify-center items-center
 }
 </style>

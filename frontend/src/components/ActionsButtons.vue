@@ -30,11 +30,7 @@ function woodAction() {
 
 <style scoped lang="scss">
 .action {
-    width: 33%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    @apply flex flex-col
+    @apply flex flex-col w-1/3 h-full justify-center items-center
 }
 </style>
 
