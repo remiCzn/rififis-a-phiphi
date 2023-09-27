@@ -7,7 +7,7 @@ export const useSocketStore = defineStore("store", () => {
   const connected = ref(false);
 
   const socket: Socket<ServerToClientMessages, ClientToServerMessages> = io(
-    "http://localhost:3000"
+    "http://server:3000/"
   );
 
   socket.on("connect", () => {
