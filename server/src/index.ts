@@ -42,15 +42,17 @@ io.on("connection", (socket) => {
     updateLobbyState(gameState, io, socket);
   });
 
-  socket.on("launchGame", () => {
-    console.log("Launching game...");
-    if (gameState.getStatus() == "Lobby") {
+  socket.on("launchGame", (callbackError) => {
+    if (
+      gameState.getStatus() == "Lobby" &&
+      gameState.players.getList().length >= 3 &&
+      gameState.players.getList().length <= 12
+    ) {
       gameState.launchGame();
+    } else {
+      callbackError("The number of players must be between 3 and 12.");
     }
     updateLobbyState(gameState, io, socket);
-    io.emit("foodUpdate", gameState.current_food)
-    io.emit("waterUpdate", gameState.current_water)
-    io.emit("woodUpdate", gameState.current_wood)
   });
 });
 
@@ -62,6 +64,9 @@ function updateLobbyState(
   io.emit("userList", gameState.players.getList());
   socket.emit("joined", gameState.players.isPlayerJoined(socket.id));
   io.emit("gameStatus", gameState.getStatus());
+  io.emit("foodUpdate", gameState.current_food);
+  io.emit("waterUpdate", gameState.current_water);
+  io.emit("woodUpdate", gameState.current_wood);
 }
 
 httpserver.listen(3000);

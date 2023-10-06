@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSocketStore } from "../lib/socket";
+import { useSocketStore } from "../../lib/socket";
 const socketStore = useSocketStore();
 </script>
 <template>

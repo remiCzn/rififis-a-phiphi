@@ -6,9 +6,7 @@ import { ref } from "vue";
 export const useSocketStore = defineStore("store", () => {
   const connected = ref(false);
 
-  const socket: Socket<ServerToClientMessages, ClientToServerMessages> = io(
-    "http://server:3000/"
-  );
+  const socket: Socket<ServerToClientMessages, ClientToServerMessages> = io();
 
   socket.on("connect", () => {
     console.log("connected");
@@ -29,7 +27,9 @@ export const useSocketStore = defineStore("store", () => {
   };
 
   const launchGame = () => {
-    socket.emit("launchGame");
+    socket.emit("launchGame", (error) => {
+      console.log(error);
+    });
   };
 
   return {
