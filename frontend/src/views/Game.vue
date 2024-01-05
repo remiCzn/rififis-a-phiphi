@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import ConnectionLostModal from "../components/modals/ConnectionLostModal.vue";
 import NotStartedGameModal from "../components/modals/NotStartedGameModal.vue";
+import ReconnectionModal from "../components/modals/ReconnectionModal.vue";
 import { useRessourcesStore } from "../lib/ressources";
 import DigitBadge from "../components/widgets/DigitBadge.vue";
+import { useUserStore } from "../lib/users";
 const ressources = useRessourcesStore();
+const users = useUserStore();
 
 function foodAction() {
   // stateStore.websocket.sendMessage({ type: MessageType.FoodAction })
@@ -20,19 +23,24 @@ function woodAction() {
 
 <template>
   <div class="w-full h-full flex flex-col">
-    <div class="flex flex-col items-start">
-      <div class="etat">
-        <DigitBadge :value="ressources.food" />
-        <span class="px-3">Nourriture</span>
+    <div class="flex flex-row">
+      <div class="flex flex-col items-start">
+        <div class="etat">
+          <DigitBadge :value="ressources.food" />
+          <span class="px-3">Nourriture</span>
+        </div>
+        <div class="etat">
+          <DigitBadge :value="ressources.water" />
+          <span class="px-3">Eau</span>
+        </div>
+        <div class="etat">
+          <DigitBadge :value="Math.floor(ressources.wood / 6)" />
+          <span class="ps-3">Radeaux</span>
+          <span class="ps-3">{{ `(${ressources.wood % 6}/6)` }}</span>
+        </div>
       </div>
-      <div class="etat">
-        <DigitBadge :value="ressources.water" />
-        <span class="px-3">Eau</span>
-      </div>
-      <div class="etat">
-        <DigitBadge :value="Math.floor(ressources.wood / 6)" />
-        <span class="ps-3">Radeaux</span>
-        <span class="ps-3">{{ `(${ressources.wood % 6}/6)` }}</span>
+      <div class="flex flex-col">
+        <p v-for="u in users.users">{{ u.name }}</p>
       </div>
     </div>
 
@@ -49,17 +57,10 @@ function woodAction() {
         Chercher bois
       </button>
     </div>
-
-    <!-- <div
-      class="w-full h-16 flex justify-center items-center border border-yellow-500"
-    >
-      <router-link :to="{ name: 'lobby' }">
-        <button>Back to lobby</button>
-      </router-link>
-    </div> -->
   </div>
   <ConnectionLostModal />
   <NotStartedGameModal />
+  <ReconnectionModal />
 </template>
 
 <style scoped lang="scss">

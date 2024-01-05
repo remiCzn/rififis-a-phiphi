@@ -1,7 +1,6 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { GameState } from "./game";
-import { Player } from "./player";
 import { ClientToServerMessages, ServerToClientMessages } from "common";
 
 type RififiServer = Server<ClientToServerMessages, ServerToClientMessages>;
@@ -38,7 +37,20 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (gameState.getStatus() == "Lobby") {
       gameState.players.removePlayer(socket.id);
+    } else if (gameState.getStatus() == "Launched") {
+      gameState.players.getPlayer(socket.id).connected = false;
     }
+    updateLobbyState(gameState, io, socket);
+  });
+
+  socket.on("reconnect", (oldSocketId, reconnected) => {
+    console.log(gameState.players);
+    gameState.players.players[socket.id] = {
+      ...gameState.players.players[oldSocketId],
+      connected: true,
+    };
+    delete gameState.players.players[oldSocketId];
+    reconnected();
     updateLobbyState(gameState, io, socket);
   });
 

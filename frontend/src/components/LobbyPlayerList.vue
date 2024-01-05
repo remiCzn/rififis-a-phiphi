@@ -15,7 +15,7 @@ const gameStore = useGameStore();
       <li
         class="flex min-w-0 gap-x-4 m-1"
         v-for="value in userStore.users"
-        v-bind:key="value.username"
+        v-bind:key="value.name"
       >
         <img
           :src="profilePic()"
@@ -24,7 +24,7 @@ const gameStore = useGameStore();
         />
         <div class="min-w-0 flex items-center">
           <p class="text-sm font-semibold leading-6 text-gray-900">
-            {{ value.username }}
+            {{ value.name }}
           </p>
         </div>
       </li>
@@ -37,7 +37,7 @@ const gameStore = useGameStore();
           userStore.users.length > 12 ||
           !userStore.joined
         "
-        @click="socketStore.launchGame()"
+        @click="socketStore.actions.launchGame()"
       >
         Launch game
       </button>

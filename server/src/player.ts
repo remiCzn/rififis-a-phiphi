@@ -1,3 +1,5 @@
+import { PlayerState } from "common/gameStatus";
+
 export class Player {
   name: string;
   alive: boolean;
@@ -35,7 +37,11 @@ export class PlayerManager {
     return this.players[socketId];
   }
 
-  getList(): Array<string> {
-    return Object.values(this.players).map((x) => x.name);
+  getList(): Array<PlayerState> {
+    return Object.entries(this.players).map(([key, x]) => ({
+      connected: x.connected,
+      name: x.name,
+      socketId: key,
+    }));
   }
 }

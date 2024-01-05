@@ -2,6 +2,7 @@ import { ClientToServerMessages, ServerToClientMessages } from "common";
 import { defineStore } from "pinia";
 import { Socket, io } from "socket.io-client";
 import { ref } from "vue";
+import { useUserStore } from "./users";
 
 export const useSocketStore = defineStore("store", () => {
   const connected = ref(false);
@@ -18,25 +19,28 @@ export const useSocketStore = defineStore("store", () => {
     connected.value = false;
   });
 
-  const joinRoom = (username: string) => {
-    socket.emit("join", username);
-  };
-
-  const leftRoom = () => {
-    socket.emit("left");
-  };
-
-  const launchGame = () => {
-    socket.emit("launchGame", (error) => {
-      console.log(error);
-    });
+  const actions = {
+    joinRoom: (username: string) => {
+      socket.emit("join", username);
+    },
+    reconnect: (socketid: string) => {
+      socket.emit("reconnect", socketid, () => {
+        useUserStore().joined = true;
+      });
+    },
+    leftRoom: () => {
+      socket.emit("left");
+    },
+    launchGame: () => {
+      socket.emit("launchGame", (error) => {
+        console.log(error);
+      });
+    },
   };
 
   return {
     socket,
     connected,
-    joinRoom,
-    leftRoom,
-    launchGame,
+    actions,
   };
 });
