@@ -5,8 +5,10 @@ import ReconnectionModal from "../components/modals/ReconnectionModal.vue";
 import { useRessourcesStore } from "../lib/ressources";
 import DigitBadge from "../components/widgets/DigitBadge.vue";
 import { useUserStore } from "../lib/users";
+import { useSocketStore } from "../lib/socket";
 const ressources = useRessourcesStore();
 const users = useUserStore();
+const socket = useSocketStore();
 
 function foodAction() {
   // stateStore.websocket.sendMessage({ type: MessageType.FoodAction })
@@ -40,7 +42,12 @@ function woodAction() {
         </div>
       </div>
       <div class="flex flex-col">
-        <p v-for="u in users.users">{{ u.name }}</p>
+        <div class="flex flex-row" v-for="u in users.users">
+          <p class="me-2" :class="u.connected ? '' : 'line-through'">
+            {{ u.name }}
+          </p>
+          <p v-if="socket.socket.id == u.socketId">(You)</p>
+        </div>
       </div>
     </div>
 

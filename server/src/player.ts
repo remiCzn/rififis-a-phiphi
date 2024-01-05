@@ -1,12 +1,17 @@
 import { PlayerState } from "common/gameStatus";
 
 export class Player {
+  static playerCount: number = 0;
+
+  id: number;
   name: string;
   alive: boolean;
   sick: boolean;
   connected: boolean;
 
   constructor(name: string) {
+    this.id = Player.playerCount;
+    Player.playerCount++;
     this.name = name;
     this.alive = true;
     this.sick = false;
@@ -38,10 +43,12 @@ export class PlayerManager {
   }
 
   getList(): Array<PlayerState> {
-    return Object.entries(this.players).map(([key, x]) => ({
-      connected: x.connected,
-      name: x.name,
-      socketId: key,
-    }));
+    return Object.entries(this.players)
+      .sort(([, v1], [, v2]) => v1.id - v2.id)
+      .map(([key, x]) => ({
+        connected: x.connected,
+        name: x.name,
+        socketId: key,
+      }));
   }
 }

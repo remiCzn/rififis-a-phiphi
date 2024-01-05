@@ -17,7 +17,10 @@ const socket = useSocketStore();
         <h1 class="font-semibold text-xl">Join as</h1>
         <ul>
           <li v-for="user in users.users.filter((x) => !x.connected)">
-            <button @click="socket.actions.reconnect(user.socketId)">
+            <button
+              class="border rounded-md min-w-12 border-red-300"
+              @click="socket.actions.reconnect(user.socketId)"
+            >
               {{ user.name }}
             </button>
           </li>

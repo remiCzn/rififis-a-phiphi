@@ -17,8 +17,13 @@ export const useUserStore = defineStore("user", () => {
     joined.value = hasJoined;
   });
 
+  const currentPlayer = () => {
+    return users.value.find((x) => x.socketId == socketStore.socket.id);
+  };
+
   return {
     users,
     joined,
+    currentPlayer,
   };
 });
