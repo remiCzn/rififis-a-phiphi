@@ -11,11 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/platform-socket.io": "^10.3.0",
+    "@nestjs/websockets": "^10.3.0",
     "common": "file:../common",
-    "socket.io": "4.7.2"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
-    "typescript": "5.3.3",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "typescript": "5.3.3"
   }
 }

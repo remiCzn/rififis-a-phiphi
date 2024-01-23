@@ -58,5 +58,6 @@ export class GameState {
 
     this.current_food = foodAndWater[playerCount][0];
     this.current_water = foodAndWater[playerCount][1];
+    this.turn_count = 0;
   }
 }
